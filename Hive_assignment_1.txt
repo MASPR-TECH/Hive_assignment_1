@@ -1,0 +1,291 @@
+ cd /tmp
+ ls
+mkdir hive_assignment1
+cp sales_order_data.csv /tmp/hive_assignment1
+hadoop fs -mkdir  /tmp/hive_assignment1
+hadoop fs -put /tmp/hive_assignment1/sales_order_data.csv /tmp/hive_assignment1
+hadoop fs -ls /tmp/hive_assignment1
+Found 1 items
+-rw-r--r--   1 cloudera supergroup     360233 2022-09-15 21:39 /tmp/hive_assignment1/sales_order_data.csv
+cloudera@quickstart hive_assignment1]$ hadoop fs -ls /user/hive/warehouse
+Found 1 items
+drwxrwxrwx   - cloudera supergroup          0 2022-09-15 21:37 /user/hive/warehouse/hive_assignment1.db
+
+
+ create table sales_order_csv
+    > (
+    > ORDERNUMBER INT,
+    > QUANTITYORDERED INT,
+    > PRINCEEACH FLOAT,
+    > ORDERLINENUMBER INT,
+    > SALES FLOAT,
+    > STATUS STRING,
+    > QTR_ID INT,
+    > MONTH_ID INT,
+    > YEAR_ID INT,
+    > PRODUCTLINE STRING,
+    > MSRP INT,
+    > PRODUCTCODE VARCHAR(20),
+    > PHONE VARCHAR(20),
+    > CITY STRING,
+    > STATE STRING,
+    > POSTALCODE VARCHAR(20),
+    > COUNTRY STRING,
+    > TERRITORY STRING,
+    > CONTACTLASTNAME STRING,
+    > CONTACTFIRSTNAME STRING,
+    > DEALSIZE STRING
+    > )
+    > row format delimited
+    > fields terminated by ','
+    > row format delimited
+    > fields terminated by ','
+    > tblproperties ("skip.header.line.count" = "1");
+OK
+
+Time taken: 1.498 seconds
+
+
+hive> escrbe formatted sales_order_csv;
+NoViableAltException(26@[])
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1028)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:201)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:166)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:522)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1356)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1473)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1285)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1275)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:226)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:175)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:389)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:781)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:699)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:634)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:221)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:136)
+FAILED: ParseException line 1:0 cannot recognize input near 'descrbe' 'formatted' 'sales_order_csv'
+hive> describe formatted sales_order_csv;
+OK
+# col_name            	data_type           	comment             
+	 	 
+ordernumber         	int                 	                    
+quantityordered     	int                 	                    
+princeeach          	float               	                    
+orderlinenumber     	int                 	                    
+sales               	float               	                    
+status              	string              	                    
+qtr_id              	int                 	                    
+month_id            	int                 	                    
+year_id             	int                 	                    
+productline         	string              	                    
+msrp                	int                 	                    
+productcode         	varchar(20)         	                    
+phone               	varchar(20)         	                    
+city                	string              	                    
+state               	string              	                    
+postalcode          	varchar(20)         	                    
+country             	string              	                    
+territory           	string              	                    
+contactlastname     	string              	                    
+contactfirstname    	string              	                    
+dealsize            	string              	                    
+	 	 
+# Detailed Table Information	 	 
+Database:           	hive_assignment1    	 
+Owner:              	cloudera            	 
+CreateTime:         	Fri Sep 16 18:48:38 PDT 2022	 
+LastAccessTime:     	UNKNOWN             	 
+Protect Mode:       	None                	 
+Retention:          	0                   	 
+Location:           	hdfs://quickstart.cloudera:8020/user/hive/warehouse/hive_assignment1.db/sales_order_csv	 
+Table Type:         	MANAGED_TABLE       	 
+Table Parameters:	 	 
+	skip.header.line.count	1                   
+	transient_lastDdlTime	1663379318          
+	 	 
+# Storage Information	 	 
+SerDe Library:      	org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe	 
+InputFormat:        	org.apache.hadoop.mapred.TextInputFormat	 
+OutputFormat:       	org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat	 
+Compressed:         	No                  	 
+Num Buckets:        	-1                  	 
+Bucket Columns:     	[]                  	 
+Sort Columns:       	[]                  	 
+Storage Desc Params:	 	 
+	field.delim         	,                   
+	serialization.format	,                   
+Time taken: 0.321 seconds, Fetched: 48 row(s)
+
+
+load data inpath 'tmp/hive_assignment1/' into table sales_order_csv;
+
+hive> show tables;
+OK
+tab_name
+sales_order_csv
+Time taken: 0.037 seconds, Fetched: 1 row(s)
+hive> select * from sales_order_csv limit  2 ;
+OK
+10107	30	95.7	2	2871.0	Shipped	1	2	2003	Motorcycles	95	S10_1678	2125557818	NYC	NY	10022	USA	NA	Yu	Kwai	Small
+10121	34	81.35	5	2765.9	Shipped	2	5	2003	Motorcycles	95	S10_1678	26.47.1555	Reims		51100	France	EMEA	Henriot	Paul	Small
+Time taken: 0.157 seconds, Fetched: 2 row(s)
+
+create table sales_order_orc
+    > (
+    > ORDERNUMBER INT,
+    >      QUANTITYORDERED INT,
+    >      PRINCEEACH FLOAT,
+    >      ORDERLINENUMBER INT,
+    >      SALES FLOAT,
+    >      STATUS STRING,
+    >      QTR_ID INT,
+    >      MONTH_ID INT,
+    >      YEAR_ID INT,
+    >      PRODUCTLINE STRING,
+    >      MSRP INT,
+    >      PRODUCTCODE VARCHAR(20),
+    >      PHONE VARCHAR(20),
+    >      CITY STRING,
+    >      STATE STRING,
+    >      POSTALCODE VARCHAR(20),
+    >      COUNTRY STRING,
+    >      TERRITORY STRING,
+    >      CONTACTLASTNAME STRING,
+    >      CONTACTFIRSTNAME STRING,
+    >      DEALSIZE STRING
+    >     )
+    > stored as ORC;
+OK
+Time taken: 0.886 seconds
+
+
+OK
+Time taken: 0.322 seconds
+hive> from sales_order_csv insert overwrite table sales_order_orc select *;
+Query ID = cloudera_20220916191111_86389602-3a02-4ce7-a29f-c5188f09d088
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1663302417861_0004, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1663302417861_0004/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1663302417861_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2022-09-16 19:11:54,187 Stage-1 map = 0%,  reduce = 0%
+2022-09-16 19:12:17,627 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 8.7 sec
+MapReduce Total cumulative CPU time: 8 seconds 700 msec
+Ended Job = job_1663302417861_0004
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/hive_assignment1.db/sales_order_orc/.hive-staging_hive_2022-09-16_19-11-26_589_2913524070622852423-1/-ext-10000
+Loading data to table hive_assignment1.sales_order_orc
+Table hive_assignment1.sales_order_orc stats: [numFiles=1, numRows=2823, totalSize=37557, rawDataSize=3153291]
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 8.7 sec   HDFS Read: 367584 HDFS Write: 37652 SUCCESS
+Total MapReduce CPU Time Spent: 8 seconds 700 msec
+OK
+Time taken: 53.36 seconds
+
+hive> select * from sales_order_orc limit  2;
+OK
+10107	30	95.7	2	2871.0	Shipped	1	2	2003	Motorcycles	95	S10_1678	2125557818	NYC	NY	10022	USA	NA	Yu	Kwai	Small
+10121	34	81.35	5	2765.9	Shipped	2	5	2003	Motorcycles	95	S10_1678	26.47.1555	Reims		51100	France	EMEA	Henriot	Paul	Small
+Time taken: 0.157 seconds, Fetched: 2 row(s)
+
+hive> select year_id, sum(sales) as total_sales from sales_order_orc group by year_id;
+Query ID = cloudera_20220916191818_24f97635-47ff-4d27-b93d-e741cd9e7610
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1663302417861_0006, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1663302417861_0006/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1663302417861_0006
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-09-16 19:18:51,972 Stage-1 map = 0%,  reduce = 0%
+2022-09-16 19:19:13,813 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 6.52 sec
+2022-09-16 19:19:34,177 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 11.83 sec
+MapReduce Total cumulative CPU time: 11 seconds 830 msec
+Ended Job = job_1663302417861_0006
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 11.83 sec   HDFS Read: 37301 HDFS Write: 70 SUCCESS
+Total MapReduce CPU Time Spent: 11 seconds 830 msec
+OK
+year_id	total_sales
+2003	3516979.547241211
+2004	4724162.593383789
+2005	1791486.7086791992
+Time taken: 66.878 seconds, Fetched: 3 row(s)
+
+hive> select productline, Max(quantity) as Maximum_orders from sales_order_orc group by product_line;
+
+productline	maximum_orders
+Classic Cars	97
+Motorcycles	66
+Planes	85
+Ships	55
+Trains	51
+Trucks and Buses 70
+Vintage Cars	76
+Time taken: 60.881 seconds, Fetched: 7 row(s)
+
+hive> select qtr_id, min(quantityordered) as minimum_sales from sales_order_orc group by qtr_id;
+
+qtr_id	minimum_sales
+2	482.13
+3	577.6
+1	683.8
+4	694.6
+hive> select qtr_id, min(sales) as minimum_sales from sales_order_orc group by qtr_id order by minimum_sales;
+
+
+sales_order_orc group by qtr_id;
+
+OK
+qtr_id	total_sales
+1	2350817.726501465
+2	2048120.3029174805
+3	1758910.808959961
+4	3874780.010925293
+
+
+hive> select country, max(sales)as maximum_sales,min(sales) as minimun_sales from sales_order_orc group by country; 
+
+country	maximum_sales	minimun_sales
+Australia	9774.03	652.35
+Austria	9240.0	640.05
+Belgium	6804.63	881.4
+Canada	9064.89	1119.93
+Denmark	10468.9	1146.5
+Finland	10606.2	891.03
+France	11739.7	482.13
+Germany	8940.96	948.99
+Ireland	8258.0	1056.4
+Italy	9160.36	577.6
+Japan	10758.0	553.95
+Norway	8844.12	1129.04
+Philippines	7483.98	1173.15
+Singapore	10993.5	785.64
+Spain	12001.0	683.8
+Sweden	7209.11	1467.48
+Switzerland	6761.6	1205.04
+UK	11886.6	710.2
+USA	14082.8	541.14
+
+
+
+
+
+
+
+
+
+
